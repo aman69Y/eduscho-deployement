@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, Send, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -17,7 +18,7 @@ const Chat = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { teacherType, teacherName } = location.state || {};
+  const { teacherType, teacherName, teacherAvatar, systemPrompt } = location.state || {};
   
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -70,6 +71,7 @@ const Chat = () => {
         body: JSON.stringify({
           messages: newMessages,
           teacherType,
+          customSystemPrompt: systemPrompt,
         }),
       });
 
@@ -206,12 +208,26 @@ const Chat = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b border-border bg-card p-4">
         <div className="container mx-auto flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
+          {teacherAvatar && (
+            <Avatar className="h-12 w-12 border-2 border-primary/20">
+              <AvatarImage src={teacherAvatar} alt={teacherName} />
+              <AvatarFallback className="bg-primary/10 text-primary">
+                {teacherName?.split(" ").map((n: string) => n[0]).join("")}
+              </AvatarFallback>
+            </Avatar>
+          )}
           <div>
             <h1 className="text-xl font-semibold">{teacherName}</h1>
             <p className="text-sm text-muted-foreground">AI Teacher Assistant</p>
+          </div>
+          <div className="ml-auto flex items-center gap-2">
+            <div className="flex items-center gap-1 text-xs text-green-500">
+              <span className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
+              Voice Enabled
+            </div>
           </div>
         </div>
       </header>

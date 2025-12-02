@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Calculator, Atom, BookOpen, GraduationCap } from "lucide-react";
+import { Calculator, Atom, BookOpen, GraduationCap, Trophy, Book, ArrowRight } from "lucide-react";
 import TeacherCard from "@/components/TeacherCard";
 import Navbar from "@/components/Navbar";
 import heroImage from "@/assets/hero-education.jpg";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -93,8 +95,69 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-12">Choose Your Teacher</h2>
+      {/* Featured Sections */}
+      <section className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          {/* NCERT Books Card */}
+          <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/ncert")}>
+            <CardHeader>
+              <div className="flex items-center gap-4">
+                <div className="p-4 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <Book className="h-8 w-8 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl">NCERT Books</CardTitle>
+                  <CardDescription>Access official NCERT textbooks for Classes 9-12</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm">Mathematics</span>
+                <span className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm">Science</span>
+                <span className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm">Physics</span>
+                <span className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm">Chemistry</span>
+              </div>
+              <Button variant="secondary" className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                Browse Books <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Olympiad Card */}
+          <Card className="group hover:shadow-lg transition-all cursor-pointer" onClick={() => navigate("/olympiad")}>
+            <CardHeader>
+              <div className="flex items-center gap-4">
+                <div className="p-4 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <Trophy className="h-8 w-8 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl">Olympiad Prep</CardTitle>
+                  <CardDescription>Learn from virtual teachers with voice interaction</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm">IMO</span>
+                <span className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm">IPhO</span>
+                <span className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm">IChO</span>
+                <span className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm">IOI</span>
+              </div>
+              <Button variant="secondary" className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                Meet Teachers <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* General AI Teachers */}
+      <section className="container mx-auto px-4 py-12">
+        <h2 className="text-3xl font-bold text-center mb-4">General AI Teachers</h2>
+        <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
+          Get instant help with any subject from our AI-powered teachers
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {teachers.map((teacher) => (
             <TeacherCard
