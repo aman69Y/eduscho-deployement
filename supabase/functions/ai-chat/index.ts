@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, teacherType } = await req.json();
+    const { messages, teacherType, customSystemPrompt } = await req.json();
     console.log("Received chat request for teacher:", teacherType);
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -27,7 +27,8 @@ serve(async (req) => {
       general: "You are a friendly and knowledgeable tutor who can help with any subject. Adapt your teaching style to the student's needs. Be patient, encouraging, and make learning engaging.",
     };
 
-    const systemPrompt = systemPrompts[teacherType as keyof typeof systemPrompts] || systemPrompts.general;
+    // Use custom system prompt if provided (for Olympiad teachers), otherwise use default
+    const systemPrompt = customSystemPrompt || systemPrompts[teacherType as keyof typeof systemPrompts] || systemPrompts.general;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
-import { User, LogOut, BookOpen, MessageSquare } from "lucide-react";
+import { User, LogOut, BookOpen, Trophy, Book } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Navbar = () => {
@@ -54,9 +54,15 @@ const Navbar = () => {
           {user ? (
             <>
               <Button variant="ghost" asChild>
-                <Link to="/lessons">
-                  <BookOpen className="mr-2 h-4 w-4" />
-                  Lessons
+                <Link to="/ncert">
+                  <Book className="mr-2 h-4 w-4" />
+                  NCERT
+                </Link>
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link to="/olympiad">
+                  <Trophy className="mr-2 h-4 w-4" />
+                  Olympiad
                 </Link>
               </Button>
               <DropdownMenu>
