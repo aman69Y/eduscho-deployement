@@ -25,24 +25,24 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = `You are an expert NCERT teacher creating comprehensive study notes for Class ${className} ${subject}.
-Generate detailed, well-structured notes for the topic: "${topic}".
+    console.log(`Generating visual notes for ${topic} - ${subject} Class ${className}`);
 
-Structure your notes with:
-1. **Introduction** - Brief overview of the topic
-2. **Key Concepts** - Main ideas with clear explanations
-3. **Important Definitions** - All relevant terms defined
-4. **Formulas/Rules** (if applicable) - With explanations
-5. **Examples** - Worked examples where relevant
-6. **Diagrams Description** - Text descriptions of important diagrams
-7. **Important Points to Remember** - Key takeaways
-8. **Common Mistakes to Avoid** - Typical errors students make
-9. **NCERT Questions Preview** - Types of questions asked
+    const imagePrompt = `Create a beautiful, educational study notes infographic for Class ${className} ${subject} on the topic: "${topic}".
 
-Use markdown formatting with headers, bullet points, and bold text for emphasis.
-Make notes comprehensive but student-friendly for Class ${className} level.
-Include mnemonics and memory tips where helpful.`;
+The image should be a well-organized study note page with:
+- Clear title at the top with the topic name
+- Key concepts in organized sections with headers
+- Important formulas or definitions in highlighted boxes
+- Simple diagrams or illustrations where applicable
+- Bullet points for key takeaways
+- Colorful but professional design suitable for students
+- Easy to read fonts and clear hierarchy
+- Memory tips or mnemonics if applicable
 
+Style: Educational infographic, clean layout, vibrant colors, professional look.
+Ultra high resolution, 16:9 aspect ratio suitable for studying.`;
+
+    // Generate image using Lovable AI with Gemini image model
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -50,12 +50,14 @@ Include mnemonics and memory tips where helpful.`;
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-2.5-flash-image-preview",
         messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: `Create comprehensive study notes for ${subject} Class ${className} on the topic: ${topic}` },
+          {
+            role: "user",
+            content: imagePrompt,
+          },
         ],
-        stream: true,
+        modalities: ["image", "text"],
       }),
     });
 
@@ -74,14 +76,40 @@ Include mnemonics and memory tips where helpful.`;
       }
       const errorText = await response.text();
       console.error("AI gateway error:", response.status, errorText);
-      throw new Error("Failed to generate notes");
+      throw new Error("Failed to generate notes image");
     }
 
-    console.log(`Streaming notes for ${topic} - ${subject} Class ${className}`);
+    const data = await response.json();
+    console.log("AI response received");
 
-    return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
-    });
+    // Extract images from the response
+    const images: string[] = [];
+    const message = data.choices?.[0]?.message;
+    
+    if (message?.images && Array.isArray(message.images)) {
+      for (const img of message.images) {
+        if (img?.image_url?.url) {
+          images.push(img.image_url.url);
+        }
+      }
+    }
+
+    if (images.length === 0) {
+      console.error("No images found in response:", JSON.stringify(data));
+      throw new Error("No images generated");
+    }
+
+    console.log(`Generated ${images.length} image(s) for ${topic}`);
+
+    return new Response(
+      JSON.stringify({ 
+        images,
+        topic,
+        subject,
+        className 
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   } catch (error: unknown) {
     console.error("Error in generate-notes:", error);
     return new Response(
