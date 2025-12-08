@@ -18,6 +18,7 @@ import Leaderboard from "./pages/Leaderboard";
 import Challenge from "./pages/Challenge";
 import Flashcards from "./pages/Flashcards";
 import Notes from "./pages/Notes";
+import StudentChat from "./pages/StudentChat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/challenge" element={<Challenge />} />
           <Route path="/flashcards" element={<Flashcards />} />
           <Route path="/notes" element={<Notes />} />
+          <Route path="/student-chat" element={<StudentChat />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -3387,3 +3387,20 @@ export const videoLessons: VideoLesson[] = [
     tags: ["probability", "bayes", "conditional"]
   }
 ];
+
+// Helper functions for filtering videos
+export const getAllClasses = (): string[] => {
+  const classes = new Set(videoLessons.map(v => v.className));
+  return Array.from(classes).sort((a, b) => parseInt(a) - parseInt(b));
+};
+
+export const getSubjectsByClass = (className: string): string[] => {
+  const subjects = new Set(
+    videoLessons.filter(v => v.className === className).map(v => v.subject)
+  );
+  return Array.from(subjects).sort();
+};
+
+export const getVideosBySubject = (subject: string, className: string): VideoLesson[] => {
+  return videoLessons.filter(v => v.subject === subject && v.className === className);
+};
